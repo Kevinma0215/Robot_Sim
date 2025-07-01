@@ -1,0 +1,5 @@
+<launch>
+  <env name="TURTLEBOT3_MODEL" value="waffle"/>
+
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_world.launch"/>
+</launch>
