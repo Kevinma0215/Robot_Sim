@@ -22,7 +22,7 @@
         type="robot_state_publisher"
         respawn="false" 
         output="screen">
-        <param name="robot_description" command="xacro '$(find simulation_module)/urdf/my_bot.xacro'" />
+        <param name="robot_description" command="xacro '$(find robot_module)/urdf/my_bot.xacro'" />
         <remap from="/joint_states" to="/my_bot/joint_states"/>
     </node>
 

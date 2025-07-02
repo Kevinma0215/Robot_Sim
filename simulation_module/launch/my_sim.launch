@@ -14,7 +14,7 @@
   </include>
 
   <!-- load the URDF into the ROS Parameter Server -->
-  <param name="robot_description" command="xacro $(find simulation_module)/urdf/my_bot.xacro" />
+  <param name="robot_description" command="xacro $(find robot_module)/urdf/my_bot.xacro" />
 
   <!-- push robot description to factory and spawn robot in gazebo -->
   <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"

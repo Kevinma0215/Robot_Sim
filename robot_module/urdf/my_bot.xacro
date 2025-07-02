@@ -19,9 +19,9 @@
     <xacro:property name="cameraSize" value="0.05"/>
     <xacro:property name="cameraMass" value="0.1"/>
 
-    <xacro:include filename="$(find simulation_module)/urdf/my_bot.gazebo"/>
-    <xacro:include filename="$(find simulation_module)/urdf/materials.xacro"/>
-    <xacro:include filename="$(find simulation_module)/urdf/macros.xacro"/>
+    <xacro:include filename="$(find robot_module)/urdf/my_bot.gazebo"/>
+    <xacro:include filename="$(find robot_module)/urdf/materials.xacro"/>
+    <xacro:include filename="$(find robot_module)/urdf/macros.xacro"/>
 
     <link name="footprint"/>
 
