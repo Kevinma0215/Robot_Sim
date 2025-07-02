@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- <param name="robot_description" command="xacro '$(find simulation_module)/urdf/my_bot.xacro'" /> -->
+
+    <!-- load joint controller configurations from YAML file to parameter server -->
+    <rosparam file="$(find control_module)/config/my_bot_control.yaml" command="load"/>
+
+    <!-- load the controllers -->
+    <node name="controller_spawner"
+        pkg="controller_manager"
+        type="spawner" 
+        respawn="false"
+        output="screen" 
+        ns="/my_bot"
+        args="joint_state_controller
+            rightWheel_effort_controller
+            leftWheel_effort_controller"/>
+
+    <!-- convert joint states to TF transform for rviz -->
+    <node name="robot_state_publisher" 
+        pkg="robot_state_publisher" 
+        type="robot_state_publisher"
+        respawn="false" 
+        output="screen">
+        <param name="robot_description" command="xacro '$(find simulation_module)/urdf/my_bot.xacro'" />
+        <remap from="/joint_states" to="/my_bot/joint_states"/>
+    </node>
+
+</launch>

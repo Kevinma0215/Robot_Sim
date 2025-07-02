@@ -1,0 +1,11 @@
+<launch>
+    <!-- launch node from pkg A -->
+    <node pkg="perception_module" type="perception_node" name="perception" output="screen" />
+
+    <!-- Launch node from package B -->
+    <node pkg="control_module" type="control_node" name="controller" output="screen" />
+
+    <!-- Launch simulation environment package -->
+    <include file="$(find robot_env)/launch/sim.launch" />
+
+</launch>
