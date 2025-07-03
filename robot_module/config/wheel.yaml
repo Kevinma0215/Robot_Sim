@@ -1,0 +1,7 @@
+wheel:
+  mass: 5      # wheel mass in kg
+  width: 0.05  # wheel width in m
+  radius: 0.1  # wheel radius in m
+  x_offset_ratio: 0.25  # wheel position on the chasssis. 0 -> 0.5 -> 1, rear -> middle -> front
+  y_offset: 0.0
+  z_offset: 0.0

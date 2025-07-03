@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!--  ================== Camera =================================
+
+    Xacro to create camera link and the respective joint.
+
+    params:
+    - parent_link [link]: link for attaching camera
+    - parent_prop [dictionary]: parent link properties
+     -->
+    <xacro:macro name="camera" params="parent_link parent_prop">
+        <!-- camera param -->
+        <xacro:property name="cameraSize" value="0.05"/>
+        <xacro:property name="cameraMass" value="0.1"/> 
+
+        <!-- camera link -->
+        <link name="camera">
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+                </geometry>
+            </collision>
+
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+                </geometry>
+                <material name="blue"/>
+            </visual>
+
+            <inertial>
+                <mass value="${cameraMass}"/>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <xacro:box_inertia m="${cameraMass}" 
+                                   x="${cameraSize}" 
+                                   y="${cameraSize}" 
+                                   z="${cameraSize}"/>
+            </inertial>
+
+        </link>
+
+        <!-- joint to connect camera with parent_link -->
+        <xacro:property name="pos_x_joint"
+                        value="${(parent_prop['chassis']['x_size']/2) - (cameraSize/2)}"/>
+        <xacro:property name="pos_z_joint"
+                        value="${(parent_prop['chassis']['z_size']/2) + (cameraSize/2)}"/>
+
+        <joint name="camera_joint" type="fixed">
+            <origin xyz="${pos_x_joint} 0 ${pos_z_joint}" rpy="0 0 0"/>
+            <parent link="${parent_link}"/>
+            <child link="camera"/>
+        </joint>
+
+        <!-- set camera param for gazebo -->
+        <gazebo reference="camera">
+            <material>Gazebo/Blue</material>
+            <sensor type="camera" name="camera1">
+                <update_rate>30.0</update_rate>
+                <camera name="head">
+                    <horizontal_fov>1.3962634</horizontal_fov>
+                    <image>
+                        <width>800</width>
+                        <height>800</height>
+                        <format>R8G8B8</format>
+                    </image>
+
+                    <clip>
+                        <near>0.02</near>
+                        <far>300</far>
+                    </clip>
+                </camera>
+
+                <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+                    <alwaysOn>true</alwaysOn>
+                    <updateRate>0.0</updateRate>
+                    <cameraName>my_bot/camera1</cameraName>
+                    <imageTopicName>image_raw</imageTopicName>
+                    <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+                    <frameName>camera_link</frameName>
+                    <hackBaseline>0.07</hackBaseline>
+                    <distortionK1>0.0</distortionK1>
+                    <distortionK2>0.0</distortionK2>
+                    <distortionK3>0.0</distortionK3>
+                    <distortionT1>0.0</distortionT1>
+                    <distortionT2>0.0</distortionT2>                
+                </plugin>
+            </sensor>
+
+        </gazebo>
+        
+    </xacro:macro>
+    <!-- ==================================================================== -->
+
+</robot>

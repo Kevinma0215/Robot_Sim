@@ -1,118 +1,45 @@
 <?xml version="1.0"?>
 <robot name="my_bot" xmlns:xacro="http://www.ros.org/wiki/xacro">
-    <!-- the robot description -->
-    <xacro:property name="PI" value="3.1415926535897931"/>
 
-    <xacro:property name="chassisHeight" value="0.1"/>
-    <xacro:property name="chassisLength" value="0.4"/>
-    <xacro:property name="chassisWidth" value="0.2"/>
-    <xacro:property name="chassisMass" value="50"/>
+    <xacro:property name="package_name" value="robot_module"/>
+    <xacro:property name="robot_name" value="my_bot"/>
 
-    <xacro:property name="casterRadius" value="0.05"/>
-    <xacro:property name="casterMass" value="5"/>
+    <xacro:include filename="$(find ${package_name})/urdf/include/robot_macros.xacro"/>
+    <xacro:include filename="$(find ${package_name})/urdf/include/sensor_macros.xacro"/>
 
-    <xacro:property name="wheelWidth" value="0.05"/>
-    <xacro:property name="wheelRadius" value="0.1"/>
-    <xacro:property name="wheelPos" value="0.2"/>
-    <xacro:property name="wheelMass" value="5"/>
+    <!-- set config -->
+    <xacro:property name="chassis_yaml" value="$(find ${package_name})/config/chassis.yaml"/>
+    <xacro:property name="chassis_props" value="${xacro.load_yaml(chassis_yaml)}"/>
 
-    <xacro:property name="cameraSize" value="0.05"/>
-    <xacro:property name="cameraMass" value="0.1"/>
+    <xacro:property name="wheel_yaml" value="$(find ${package_name})/config/wheel.yaml"/>
+    <xacro:property name="wheel_props" value="${xacro.load_yaml(wheel_yaml)}"/>
 
+    <xacro:property name="caster_wheel_yaml" value="$(find ${package_name})/config/caster_wheel.yaml"/>
+    <xacro:property name="caster_wheel_props" value="${xacro.load_yaml(caster_wheel_yaml)}"/>
+
+    <!-- Chassis -->
+    <xacro:chassis chassis_prop="${chassis_props}" 
+                   wheel_prop="${wheel_props}"/>
+
+    <!-- Wheels -->
+    <xacro:wheel prefix="left" reflect="1"
+                 wheel_prop="${wheel_props}"
+                 chassis_prop="${chassis_props}"/>
+
+    <xacro:wheel prefix="right" reflect="-1"
+                 wheel_prop="${wheel_props}"
+                 chassis_prop="${chassis_props}"/>
+
+    <!-- Caster wheel -->
+    <xacro:caster_wheel caster_prop="${caster_wheel_props}"
+                        chassis_prop="${chassis_props}"
+                        wheel_prop="${wheel_props}"/>
+
+    <!-- Camera -->
+    <xacro:camera parent_prop="${chassis_props}" 
+                  parent_link="chassis" />
+
+    <!-- load argument for gazebo -->
     <xacro:include filename="$(find robot_module)/urdf/my_bot.gazebo"/>
-    <xacro:include filename="$(find robot_module)/urdf/materials.xacro"/>
-    <xacro:include filename="$(find robot_module)/urdf/macros.xacro"/>
-
-    <link name="footprint"/>
-
-    <joint name="base_joint" type="fixed">
-        <parent link="footprint"/>
-        <child link="chassis"/>
-    </joint>
-
-    <link name="chassis">
-        <collision>
-            <origin xyz="0 0 ${wheelRadius}" rpy="0 0 0"/>
-            <geometry>
-                <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/>
-            </geometry>
-        </collision>
-
-        <visual>
-            <origin xyz="0 0 ${wheelRadius}" rpy="0 0 0"/>
-            <geometry>
-                <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/>
-            </geometry>
-            <material name="orange"/>
-        </visual>
-
-        <inertial>
-            <origin xyz="0 0 ${wheelRadius}" rpy="0 0 0"/>
-            <mass value="${chassisMass}"/>
-            <xacro:box_inertia m="${chassisMass}" x="${chassisLength}" y="${chassisWidth}" z="${chassisHeight}"/>
-        </inertial>
-    </link>
-
-    <joint name="fixed" type="fixed">
-        <parent link="chassis"/>
-        <child link="caster_wheel"/>
-    </joint>
-
-    <link name="caster_wheel">
-        <collision>
-            <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+wheelRadius}" rpy="0 0 0"/>
-            <geometry>
-                <sphere radius="${casterRadius}"/>
-            </geometry>
-        </collision>
-
-        <visual>
-            <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+wheelRadius}" rpy="0 0 0"/>
-            <geometry>
-                <sphere radius="${casterRadius}"/>
-            </geometry>
-            <material name="red"/>
-        </visual>
-
-        <inertial>
-            <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+wheelRadius}" rpy="0 0 0"/>
-            <mass value="${casterMass}"/>
-            <xacro:sphere_inertia m="${casterMass}" r="${casterRadius}"/>
-        </inertial>
-    </link>
-
-    <xacro:wheel lr="left" tY="1"/>
-    <xacro:wheel lr="right" tY="-1"/>
-
-    <joint name="camera_joint" type="fixed">
-            <axis xyz="0 1 0"/>
-            <origin xyz="0 0 0.2" rpy="0 0 0"/>
-        <parent link="footprint"/>
-        <child link="camera"/>
-    </joint>
-
-    <link name="camera">
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
-            </geometry>
-        </collision>
-
-        <visual>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
-            </geometry>
-            <material name="blue"/>
-        </visual>
-
-        <inertial>
-            <mass value="${cameraMass}"/>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <xacro:box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}"/>
-        </inertial>
-
-    </link>
-
+    
 </robot>

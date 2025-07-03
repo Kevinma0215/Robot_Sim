@@ -1,0 +1,241 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    
+    <!-- load RVIZ material RGBA definition -->
+    <xacro:include filename="$(find ${package_name})/urdf/include/rviz_rgba_def.xacro"/>
+
+    <!-- load common inertia macros definition -->
+    <xacro:include filename="$(find ${package_name})/urdf/include/inertia.xacro"/>
+
+    <!-- set common constant -->
+    <xacro:property name="PI" value="3.1415926535897931"/>
+
+    <!-- ===================== Chassis xacro ======================
+
+    Xacro to create the chassis link, footprint link and the respective joint.
+    (footprint is a fictitious link(frame) that is on the ground right below base link origin.)
+
+    params:
+    - chassis_prop [dictionary]: chassis link properties;
+    - wheel_prop [dictionary]: wheel link properties;
+    - mesh [string]: file name of the link mesh;
+        - DEFAULT Value -> Empty String
+    - origin [block]: origin position and orientation of the link;    
+     -->
+    <xacro:macro name="chassis" 
+                 params="chassis_prop wheel_prop mesh:=''">
+
+        <!-- linkposition -->
+
+        <!-- chassis link -->
+        <link name="chassis">
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <box size="${chassis_prop['chassis']['x_size']} 
+                               ${chassis_prop['chassis']['y_size']} 
+                               ${chassis_prop['chassis']['z_size']}"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="${chassis_prop['chassis']['mass']}"/>
+                <xacro:box_inertia m="${chassis_prop['chassis']['mass']}"
+                                   x="${chassis_prop['chassis']['x_size']}"
+                                   y="${chassis_prop['chassis']['y_size']}"
+                                   z="${chassis_prop['chassis']['z_size']}"/>
+            </inertial>
+
+            <xacro:if value="${mesh == '' }">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <box size="${chassis_prop['chassis']['x_size']} 
+                                   ${chassis_prop['chassis']['y_size']} 
+                                   ${chassis_prop['chassis']['z_size']}"/>
+                    </geometry>
+                    <material name="orange"/>
+                </visual>
+            </xacro:if>
+
+            <xacro:if value="${mesh != '' }">
+                <visual>
+                    <origin xyz="0 0 0" rpy="0 0 0"/>
+                    <geometry>
+                        <!-- the folder path get a folder_name global parameter -->
+                        <mesh filename="package://${package_name}/meshes/${robot_name}/S{mesh}"/>
+                    </geometry>
+                    <material name="orange"/>
+                </visual>
+            </xacro:if>
+
+        </link>
+
+        <!-- set chassis link param for gazebo -->
+        <gazebo reference="chassis">
+            <material>Gazebo/Orange</material>
+        </gazebo>
+
+        <!-- footprint link -->
+        <link name="footprint"/>
+
+        <!-- joint to connect footprint with chassis link -->
+        <joint name="base_joint" type="fixed">
+            <parent link="footprint"/>
+            <child link="chassis"/>
+            <origin xyz="0 0 ${wheel_prop['wheel']['radius'] - wheel_prop['wheel']['z_offset']}" 
+                    rpy="0 0 0"/>
+        </joint>
+
+    </xacro:macro>
+    <!-- ===================================================== -->
+
+    <!-- ================== Wheel xacro ==========================
+
+    Xacro to create a wheel link and the respective joint.
+
+    params:
+    - prefix [string]: used to diferentiate the link and the joint name;
+    - reflect [1/-1]: value to set the side of the wheel. "1" for left, "-1" for right;
+    - wheel_prop [dictionary]: wheel prperties;
+    - chassis_prop [dictionary]: chassis link properties;
+    - mesh [string]: file name of the wheel mesh;
+        - DEFAULT Value -> Empty string
+    -->
+    <xacro:macro name="wheel" 
+                 params="prefix reflect wheel_prop chassis_prop mesh:='' ">
+
+        <!-- wheel link -->
+        <link name="${prefix}_wheel">
+            <collision>
+                <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}"/>
+                <geometry>
+                    <cylinder length="${wheel_prop['wheel']['width']}" 
+                              radius="${wheel_prop['wheel']['radius']}"/>
+                </geometry>
+            </collision>
+
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}"/>
+                <mass value="${wheel_prop['wheel']['mass']}"/>
+                <xacro:cylinder_inertia m="${wheel_prop['wheel']['mass']}" 
+                                        r="${wheel_prop['wheel']['radius']}" 
+                                        h="${wheel_prop['wheel']['width']}"/>
+            </inertial>
+
+            <visual>
+                <origin xyz="0 0 0" rpy="0 ${PI/2} ${PI/2}"/>
+                <geometry>
+                    <cylinder length="${wheel_prop['wheel']['width']}" 
+                              radius="${wheel_prop['wheel']['radius']}"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+            
+        </link>
+
+        <!-- joint to connnect wheel with chassis link -->
+        <xacro:property name="pos_x_joint"
+            value="${chassis_prop['chassis']['x_size'] * (wheel_prop['wheel']['x_offset_ratio'] - 0.5)}"/>
+        <xacro:property name="pos_y_joint"
+            value="${(chassis_prop['chassis']['y_size']/2) + wheel_prop['wheel']['y_offset'] + (wheel_prop['wheel']['width']/2)}"/>
+        <xacro:property name="pos_z_joint"
+            value="${wheel_prop['wheel']['z_offset']}"/>
+
+        <joint name="${prefix}_wheel_joint" type="continuous">
+            <axis xyz="0 1 0" rpy="0 0 0"/>
+            <parent link="chassis"/>
+            <child link="${prefix}_wheel"/>
+            <origin xyz="${pos_x_joint} ${reflect*pos_y_joint} ${pos_z_joint}" rpy="0 0 0"/>
+            <!-- <limit effort="100" velocity="100"/>
+            <joint_properties damping="0.0" friction="0.0"/> -->
+        </joint>
+
+        <!-- set wheel link param for gazebo -->
+        <gazebo reference="${prefix}_wheel">
+            <mu1>1.0</mu1>
+            <mu2>1.0</mu2>
+            <kp>10000000.0</kp>
+            <kd>1.0</kd>
+            <fdir1>1 0 0</fdir1>
+            <material>Gazebo/Black</material>
+        </gazebo>
+
+        <!--  -->
+        <transmission name="${prefix}_trans">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${prefix}_wheel_joint">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${prefix}_motor">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>10</mechanicalReduction>
+            </actuator>
+        </transmission>
+        
+    </xacro:macro>
+    <!-- =============================================================== -->
+
+    <!-- ================ Caster wheel xacro ===============================
+
+    Xacro to create a caster wheel link and the respective joint.
+
+    params:
+    - caster_prop [dictionary]: caster wheel prperties;
+    - mesh [string]: file name of the wheel mesh;
+        - DEFAULT Value -> Empty string
+     -->
+    <xacro:macro name="caster_wheel"
+                 params="caster_prop chassis_prop wheel_prop mesh:=''">
+
+        <!-- caster wheel link -->
+        <link name="caster_wheel">
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <sphere radius="${caster_prop['caster_wheel']['radius']}"/>
+                </geometry>
+            </collision>
+
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <sphere radius="${caster_prop['caster_wheel']['radius']}"/>
+                </geometry>
+                <material name="red"/>
+            </visual>
+
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <mass value="${caster_prop['caster_wheel']['mass']}"/>
+                <xacro:sphere_inertia m="${caster_prop['caster_wheel']['mass']}" 
+                                      r="${caster_prop['caster_wheel']['radius']}"/>
+            </inertial>
+        </link>
+
+        <!-- set caster wheel param for gazebo -->
+        <gazebo reference="caster_wheel">
+            <mu1>0.0</mu1>
+            <mu2>0.0</mu2>
+            <material>Gazebo/Red</material>
+        </gazebo>
+
+        <!-- joint to connect caster wheel with chassis link -->
+        <xacro:property name="pos_x_joint" 
+                        value="${- caster_prop['caster_wheel']['radius'] + (chassis_prop['chassis']['x_size']/2)}"/>
+        <xacro:property name="pos_z_joint" 
+                        value="${- (chassis_prop['chassis']['z_size']/2)}"/>
+                        <!-- ${caster_prop['caster_wheel']['radius']} -->
+
+        <joint name="fixed" type="fixed">
+            <parent link="chassis"/>
+            <child link="caster_wheel"/>
+            <origin xyz="${pos_x_joint} 0 ${pos_z_joint}" rpy="0 0 0"/>
+        </joint>
+
+    </xacro:macro>
+    <!-- ============================================================= -->
+
+
+</robot>

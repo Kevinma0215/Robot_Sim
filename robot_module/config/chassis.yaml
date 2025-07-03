@@ -1,0 +1,6 @@
+chassis:
+  mass: 50      # chassis mass in kg
+  x_size: 0.4   # chassis length in m
+  y_size: 0.2   # chassis width in m
+  z_size: 0.1   # chassis height in m
+  mesh: ''      # name of the mesh files. leave it empty ('') to have a orange chassis

@@ -1,0 +1,26 @@
+<launch>
+    <!-- <param name="robot_description" textfile="$(find robot_module)/urdf/my_bot.urdf"/> -->
+
+    <!-- load xacro & convert to robot_description -->
+    <param name="robot_description" command="$(find xacro)/xacro $(find robot_module)/urdf/my_bot.xacro"/>
+    
+    <!-- set gui -->
+    <!-- <param name="use_gui" value="true"/> -->
+
+    <!-- run joint_state_publisher -->
+    <node name="joint_state_publisher"
+        pkg="joint_state_publisher"
+        type="joint_state_publisher"/>
+
+    <!-- run robot_state_publisher to publish TF -->
+    <node name="robot_state_publisher"
+        pkg="robot_state_publisher"
+        type="robot_state_publisher"/>
+
+    <!-- run rviz -->
+    <node name="rviz"
+        pkg="rviz"
+        type="rviz"
+        args="-d $(find robot_module)/rviz/my_bot.rviz"/>
+
+</launch>

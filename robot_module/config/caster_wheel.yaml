@@ -1,0 +1,3 @@
+caster_wheel:
+  mass: 5       # caster wheel mass in kg
+  radius: 0.05  # caster wheel radius in m
