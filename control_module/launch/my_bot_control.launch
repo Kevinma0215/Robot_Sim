@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <launch>
-    <!-- <param name="robot_description" command="xacro '$(find simulation_module)/urdf/my_bot.xacro'" /> -->
-
     <!-- load joint controller configurations from YAML file to parameter server -->
     <rosparam file="$(find control_module)/config/my_bot_control.yaml" command="load"/>
 
