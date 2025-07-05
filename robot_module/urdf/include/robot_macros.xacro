@@ -148,8 +148,8 @@
             <parent link="chassis"/>
             <child link="${prefix}_wheel"/>
             <origin xyz="${pos_x_joint} ${reflect*pos_y_joint} ${pos_z_joint}" rpy="0 0 0"/>
-            <!-- <limit effort="100" velocity="100"/>
-            <joint_properties damping="0.0" friction="0.0"/> -->
+            <limit effort="100" velocity="100"/>
+            <joint_properties damping="0.0" friction="0.0"/>
         </joint>
 
         <!-- set wheel link param for gazebo -->
@@ -162,15 +162,15 @@
             <material>Gazebo/Black</material>
         </gazebo>
 
-        <!--  -->
-        <transmission name="${prefix}_trans">
+        <!-- set transmission system -->
+        <transmission name="${prefix}_wheel_trans">
             <type>transmission_interface/SimpleTransmission</type>
             <joint name="${prefix}_wheel_joint">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
             </joint>
             <actuator name="${prefix}_motor">
                 <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
-                <mechanicalReduction>10</mechanicalReduction>
+                <mechanicalReduction>1</mechanicalReduction>
             </actuator>
         </transmission>
         

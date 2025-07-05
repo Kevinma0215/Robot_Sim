@@ -5,7 +5,6 @@
     <xacro:property name="robot_name" value="my_bot"/>
 
     <xacro:include filename="$(find ${package_name})/urdf/include/robot_macros.xacro"/>
-    <xacro:include filename="$(find ${package_name})/urdf/include/sensor_macros.xacro"/>
 
     <!-- set config -->
     <xacro:property name="chassis_yaml" value="$(find ${package_name})/config/chassis.yaml"/>
@@ -36,10 +35,18 @@
                         wheel_prop="${wheel_props}"/>
 
     <!-- Camera -->
-    <xacro:camera parent_prop="${chassis_props}" 
-                  parent_link="chassis" />
+    <!-- <xacro:include filename="$(find ${package_name})/urdf/include/sensor_macros.xacro"/> -->
+    <!-- <xacro:camera parent_prop="${chassis_props}" 
+                  parent_link="chassis" /> -->
 
     <!-- load argument for gazebo -->
-    <xacro:include filename="$(find robot_module)/urdf/my_bot.gazebo"/>
+    <!-- <xacro:include filename="$(find robot_module)/urdf/my_bot.gazebo"/> -->
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/my_bot</robotNamespace>
+            <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+            <!-- <legacyModeNS>True</legacyModeNS> -->
+        </plugin>
+    </gazebo>
     
 </robot>

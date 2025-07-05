@@ -1,18 +1,16 @@
 <launch>
-    <!-- <param name="robot_description" textfile="$(find robot_module)/urdf/my_bot.urdf"/> -->
-
     <!-- load xacro & convert to robot_description -->
-    <param name="robot_description" command="$(find xacro)/xacro $(find robot_module)/urdf/my_bot.xacro"/>
-    
-    <!-- set gui -->
-    <!-- <param name="use_gui" value="true"/> -->
+    <param name="robot_description" 
+           command="xacro $(find robot_module)/urdf/my_bot.xacro"/>
 
-    <!-- run joint_state_publisher -->
+    <!-- send fake joint values -->
     <node name="joint_state_publisher"
         pkg="joint_state_publisher"
-        type="joint_state_publisher"/>
+        type="joint_state_publisher">
+        <!-- <param name="use_gui" value="true"/> -->
+    </node>
 
-    <!-- run robot_state_publisher to publish TF -->
+    <!-- combine joint values to publish TF -->
     <node name="robot_state_publisher"
         pkg="robot_state_publisher"
         type="robot_state_publisher"/>

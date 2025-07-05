@@ -5,22 +5,21 @@
 
     <!-- load the controllers -->
     <node name="controller_spawner"
-        pkg="controller_manager"
-        type="spawner" 
-        respawn="false"
-        output="screen" 
-        ns="/my_bot"
-        args="joint_state_controller
-            rightWheel_effort_controller
-            leftWheel_effort_controller"/>
+          pkg="controller_manager"
+          type="spawner" 
+          respawn="false"
+          output="screen" 
+          ns="/my_bot"
+          args="joint_state_controller
+                rightWheel_effort_controller
+                leftWheel_effort_controller"/>
 
     <!-- convert joint states to TF transform for rviz -->
     <node name="robot_state_publisher" 
-        pkg="robot_state_publisher" 
-        type="robot_state_publisher"
-        respawn="false" 
-        output="screen">
-        <param name="robot_description" command="xacro '$(find robot_module)/urdf/my_bot.xacro'" />
+          pkg="robot_state_publisher" 
+          type="robot_state_publisher"
+          respawn="false"
+          output="screen">
         <remap from="/joint_states" to="/my_bot/joint_states"/>
     </node>
 
