@@ -1,0 +1,72 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+    <world name="line_following_world">
+        <!-- Physics settings optimized for robot simulation -->
+        <physics type="ode">
+            <max_step_size>0.001</max_step_size>
+            <real_time_factor>1.0</real_time_factor>
+            <real_time_update_rate>1000</real_time_update_rate>
+            <gravity>0 0 -9.81</gravity>
+        </physics>
+
+        <!--ground-->
+        <include>
+            <uri>model://ground_plane</uri>
+        </include>
+
+        <!--light-->
+        <include>
+            <uri>model://sun</uri>
+        </include>
+
+        <!-- White line made from simple box geometry -->
+        <model name="white_line">
+            <static>true</static>
+            <pose>0 0 0.001 0 0 0</pose>  <!-- Slightly above ground to avoid z-fighting -->
+            <link name="line_link">
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.1 10 0.001</size>  <!-- width: 10cm, length: 10m, height: 1mm -->
+                        </box>
+                    </geometry>
+                    <material>
+                        <!-- <script>
+                            <uri>file://media/materials/scripts/gazebo.material</uri>
+                            <n>Gazebo/White</n>
+                        </script> -->
+                        <ambient>1 1 1 1</ambient>
+                        <diffuse>1 1 1 1</diffuse>
+                        <specular>1 1 1 1</specular>
+                    </material>
+                </visual>
+                <!-- No collision needed for visual-only line -->
+            </link>
+        </model>
+
+        <!-- Starting position marker -->
+        <model name="start_marker">
+            <static>true</static>
+            <pose>0 0 0.001 0 0 0</pose>
+            <link name="link">
+                <visual name="visual">
+                    <geometry>
+                        <box>
+                            <size>0.2 0.2 0.01</size>
+                        </box>
+                    </geometry>
+                    <material>
+                        <!-- <script>
+                            <uri>file://media/materials/scripts/gazebo.material</uri>
+                            <n>Gazebo/Red</n>
+                        </script> -->
+                        <ambient>1 0 0 1</ambient>
+                        <diffuse>1 0 0 1</diffuse>
+                        <specular>1 0 0 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+    </world>
+</sdf>

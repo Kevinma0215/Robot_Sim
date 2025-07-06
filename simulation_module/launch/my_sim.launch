@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
   <!-- set params -->
-  <arg name="world_name" value="$(find simulation_module)/worlds/my_world.world"/>
+  <arg name="world_name" value="$(find simulation_module)/worlds/line_following_world.world"/>
   <arg name="paused" value="false"/>
   <arg name="use_sim_time" default="true"/>
   <arg name="gui" default="true"/>
@@ -34,5 +34,9 @@
 <!-- ============ Note ======================
 
 To control the car in gazebo, in new terminal: 
- rostopic pub /my_bot/rightWheel_effort_controller/command std_msgs/Float64 "data: 1.0"
+  rostopic pub /my_bot/rightWheel_effort_controller/command std_msgs/Float64 "data: 1.0"
+
+To show image from the car, in new terminal:
+  rosrun image_view image_view image:=/my_bot/camera1/image_raw
+
  -->

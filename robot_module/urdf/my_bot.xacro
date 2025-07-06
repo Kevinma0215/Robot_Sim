@@ -35,9 +35,9 @@
                         wheel_prop="${wheel_props}"/>
 
     <!-- Camera -->
-    <!-- <xacro:include filename="$(find ${package_name})/urdf/include/sensor_macros.xacro"/> -->
-    <!-- <xacro:camera parent_prop="${chassis_props}" 
-                  parent_link="chassis" /> -->
+    <xacro:include filename="$(find ${package_name})/urdf/include/sensor_macros.xacro"/>
+    <xacro:camera parent_prop="${chassis_props}" 
+                  parent_link="chassis" />
 
     <!-- load argument for gazebo -->
     <!-- <xacro:include filename="$(find robot_module)/urdf/my_bot.gazebo"/> -->
