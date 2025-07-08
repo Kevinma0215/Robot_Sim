@@ -1,0 +1,42 @@
+<launch>
+    <!-- set params -->
+    <arg name="debug" default="false"/>
+    <arg name="camera_topic" default="/my_bot/camera1/image_raw"/>
+    <arg name="robot_name" default="my_bot"/>
+
+    <!-- line detector node -->
+    <node name="line_detector" 
+          pkg="perception_module" 
+          type="line_detector_node"
+          output="screen">
+        <!-- line detection params -->
+        <param name="debug" value="$(arg debug)"/>
+        <param name="roi_height_ratio" value="0.4"/>
+
+        <!-- HSV thresholds for white line detection -->
+        <rosparam param="lower_white">[0, 0, 200]</rosparam>
+        <rosparam param="upper_white">[180, 30, 255]</rosparam>
+        
+        <!-- Remap topics for Gazebo camera -->
+        <remap from="/camera/image_raw" to="$(arg camera_topic)"/>
+    </node>
+
+    <!-- Debug tools (only launch if debug is true) -->
+    <group if="$(arg debug)">
+        <!-- Image view for Gazebo camera feed -->
+        <node name="camera_view" pkg="image_view" type="image_view" output="screen">
+            <remap from="image" to="$(arg camera_topic)"/>
+        </node>
+        
+        <!-- Image view for debug output -->
+        <node name="debug_view" pkg="image_view" type="image_view" output="screen">
+            <remap from="image" to="/line_detector/debug_image"/>
+        </node>
+        
+        <!-- RQT plot for error visualization -->
+        <node name="error_plot" pkg="rqt_plot" type="rqt_plot" 
+              args="/line_error/data" output="screen"/>
+    </group>
+
+
+</launch>
