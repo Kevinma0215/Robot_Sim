@@ -1,5 +1,8 @@
 # Robot Module Package
 
+Use xacro to build robot model.
+
+
 ## Structure
 ```
 .
