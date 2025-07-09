@@ -16,3 +16,12 @@ Use gazebo to do simulation, including environment building and each module inte
     └── line_following_world.world
 
 ```
+
+## Status
+
+Successfully integrate world environment with robot module.
+
+### To-do
+- integrate Perception Module.
+- integrate Control Module.
+- Design more suitable visualization system.
