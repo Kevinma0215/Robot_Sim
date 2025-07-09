@@ -27,7 +27,7 @@
                 <visual name="visual">
                     <geometry>
                         <box>
-                            <size>0.1 10 0.001</size>  <!-- width: 10cm, length: 10m, height: 1mm -->
+                            <size>10 0.1 0.001</size>  <!-- width: 10cm, length: 10m, height: 1mm -->
                         </box>
                     </geometry>
                     <material>
